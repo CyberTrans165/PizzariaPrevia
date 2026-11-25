@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: fb_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/fb_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # Troque por `npm ci` depois que o package-lock.json estiver no repositório.
+      - name: Instalar dependências
+        run: npm install --no-audit --no-fund
+
+      - name: Tipos (site, domínio, testes)
+        run: npm run typecheck
+
+      - name: Tipos da função (Deno)
+        run: deno check supabase/functions/api/index.ts
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Banco (migrações, seed, RLS e restrições)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          bash scripts/db/check.sh
+
+      - name: Testes (unitários e integração)
+        run: npm test
+
+      - name: Build do site
+        run: npx vite build
+
+      - name: Procurar segredos no build
+        run: |
+          if grep -RIl -E "service_role|MP_ACCESS_TOKEN|TURNSTILE_SECRET|APP_SECRET_KEY" dist; then
+            echo "Segredo encontrado no build do site" && exit 1
+          fi

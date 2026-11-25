@@ -1,0 +1,20 @@
+node_modules/
+dist/
+dist-vitrine/
+coverage/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+
+# Segredos
+.env
+.env.*
+!.env.example
+supabase/.env.local
+supabase/.env.*
+!supabase/.env.example
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/

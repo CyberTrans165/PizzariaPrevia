@@ -1,0 +1,29 @@
+# Configuração do Supabase CLI para desenvolvimento local (`supabase start`).
+# Só o necessário para este projeto; o resto usa os padrões do CLI.
+project_id = "forno-bella"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+# Ajuste para a versão do Postgres do projeto remoto (projetos novos costumam usar 17).
+major_version = 17
+
+[db.seed]
+enabled = true
+# Dados de demonstração. Em cópia de cliente, troque por um seed vazio ou desligue.
+sql_paths = ["./seed/demo.sql"]
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+# O Supabase Auth NÃO é usado (login próprio do dono, ETAPA 10).
+enabled = false
+
+[functions.api]
+# O login é próprio: a função valida sessão, CSRF e assinaturas no código.
+verify_jwt = false
