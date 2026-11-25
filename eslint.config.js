@@ -25,7 +25,7 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.browser, Deno: "readonly" } },
     rules: {
       // Logs passam pelo logger, que remove dados pessoais.
-      "no-console": ["error", { allow: [] }],
+      "no-console": "error",
     },
   },
   {
