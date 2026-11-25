@@ -22,10 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Sem `cache: npm` por enquanto: o cache exige um package-lock.json, que ainda
+      # não está no repositório. Quando ele existir, volte com `cache: npm` aqui.
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - uses: denoland/setup-deno@v2
         with:
